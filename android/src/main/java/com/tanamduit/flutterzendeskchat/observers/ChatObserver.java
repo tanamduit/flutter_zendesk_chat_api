@@ -28,23 +28,32 @@ public class ChatObserver extends ChatItemsObserver {
     public ChatObserver(Context context){
         super(context);
     }
-
-
+    boolean isFirst = true;
     @Override
     protected void updateChatItems(TreeMap<String, RowItem> treeMap) {
         updateChat(treeMap);
-
     }
 
     private void updateChat(TreeMap<String, RowItem> chats){
         Log.e("Chat Observer","observing chat with size :"+ chats.size());
         Iterator i = chats.values().iterator();
-        while (i.hasNext()){
-            RowItem item = (RowItem)i.next();
-            Log.e("Chat Observer","Chat type : "+ item.getType().name());
-            Map<String,String> data = new HashMap<>();
-            data.put("rowItem",rowItemToString(item));
-            FlutterZendeskChatPlugin.channel.invokeMethod("observingChat",data);
+        if(isFirst || chats.size() == 0){
+            isFirst = false;
+            while (i.hasNext()){
+                RowItem item = (RowItem)i.next();
+                Log.e("Chat Observer", "Chat type : " + item.getType().name());
+                Map<String, String> data = new HashMap<>();
+                data.put("rowItem", rowItemToString(item));
+                FlutterZendeskChatPlugin.channel.invokeMethod("observingChat", data);
+            }
+        }else {
+            RowItem last = chats.lastEntry().getValue();
+            if(last != null) {
+                Log.e("Chat Observer", "Chat type : " + last.getType().name());
+                Map<String, String> data = new HashMap<>();
+                data.put("rowItem", rowItemToString(last));
+                FlutterZendeskChatPlugin.channel.invokeMethod("observingChat", data);
+            }
         }
     }
 

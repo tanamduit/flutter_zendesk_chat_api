@@ -145,6 +145,8 @@ public class ChatDelegate implements ConnectionListener,NotificationListener {
                             onConnected();
                             break;
                     }
+                }else{
+                    Log.e("flutter_zendesk_chat","Chat has ended detected by connection observer");
                 }
             }
         };
@@ -152,7 +154,7 @@ public class ChatDelegate implements ConnectionListener,NotificationListener {
         ZopimChatApi.getDataSource().addAccountObserver(accountObserver).trigger();
         ZopimChatApi.getDataSource().addAgentsObserver(agentTypingObserver).trigger();
         ZopimChatApi.getDataSource().addChatLogObserver(chatObserver).trigger();
-        ZopimChatApi.getDataSource().addConnectionObserver(vConnectionObserver);
+        ZopimChatApi.getDataSource().addConnectionObserver(vConnectionObserver).trigger();
         LocalBroadcastManager.getInstance(vRegistrar.activeContext()).registerReceiver(vChatTimeoutReceiver,new IntentFilter("chat.action.TIMEOUT"));
         chatListener.onChatInitialized();
     }

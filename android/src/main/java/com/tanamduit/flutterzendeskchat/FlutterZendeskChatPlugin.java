@@ -160,8 +160,10 @@ public class FlutterZendeskChatPlugin implements MethodCallHandler,ChatListener,
   @Override
   public void onChatEnded() {
     handler.removeCallbacksAndMessages((Object)null);
-
     chatDelegate.stoppingChat();
+    if(chat != null) {
+      chat = null;
+    }
     LocalBroadcastManager.getInstance(vRegistrar.activeContext()).unregisterReceiver(chatInitializationTimeOut);
   }
 
