@@ -21,14 +21,17 @@ ZDCChatAPI *chat;
       [self sendingMessage:call result:result];
   }else if([@"attachmentFile" isEqualToString: call.method]){
       [self sendingMessage:call result:result];
-  } else if([@"closeChat" isEqualToString:call.method]){
-      [self endChat:result];
+  }else if([@"closeChat" isEqualToString:call.method]){
+      [self closingChat:result];
+  }else if([@"endingChat" isEqualToString:call.method]){
+      [self endingChat:result];
   }else if([@"transcriptEmail" isEqualToString:call.method]){
-      
+      [self transcriptChat:call result:result];
   } else {
     result(FlutterMethodNotImplemented);
   }
 }
+
 
 - (void)transcriptChat:(FlutterMethodCall*)call result:(FlutterResult)result{
     NSString *email = call.arguments[@"email"];
@@ -36,18 +39,30 @@ ZDCChatAPI *chat;
     result(@YES);
 }
 
-- (void)endChat:(FlutterResult)result{
+- (void)closingChat:(FlutterResult)result{
+    [self removingObserver];
+    //[chat endChat];
+    chat = nil;
+    result(@"END");
+}
+
+- (void)endingChat:(FlutterResult)result{
+    [self removingObserver];
+    [chat endChat];
+    chat = nil;
+    result(@"END");
+}
+       
+- (void)removingObserver{
     [chat removeObserverForConnectionEvents:self];
     [chat removeObserverForTimeoutEvents:self];
     [chat removeObserverForChatLogEvents:self];
     [chat removeObserverForAgentEvents:self];
     [chat removeObserverForUploadEvents:self];
     [chat removeObserverForAccountEvents:self];
-    [chat endChat];
-    chat = nil;
-    result(@"END");
 }
-
+       
+       
 - (void)sendingMessage:(FlutterMethodCall*)call result:(FlutterResult)result{
     NSString *type = call.arguments[@"chatType"];
     if([@"text" isEqualToString:type]){
@@ -81,18 +96,21 @@ ZDCChatAPI *chat;
     NSLog(@"Name :  %@",name);
     NSLog(@"Phone:  %@",phone);
     NSLog(@"Email :  %@",email);
+    _isFirstTime = YES;
     chat =  [ZDCChatAPI instance];
     chat.visitorInfo.name = name;
     chat.visitorInfo.email = email;
     chat.visitorInfo.phone = phone;
     [chat startChatWithAccountKey:accKey];
+    [self accountState];
+    [self connectionState];
+    [self chatLogObserving];
     [chat addObserver:self forConnectionEvents:@selector(connectionState)];
     [chat addObserver:self forTimeoutEvents:@selector(chatIsTimeout)];
     [chat addObserver:self forChatLogEvents:@selector(chatLogObserving)];
     [chat addObserver:self forAgentEvents:@selector(agentState)];
     [chat addObserver:self forUploadEvents:@selector(uploadingFile)];
     [chat addObserver:self forAccountEvents:@selector(accountState)];
-    [self chatLogObserving];
     result(@"initialized");
 }
 
@@ -178,9 +196,16 @@ ZDCChatAPI *chat;
 }
 
 - (void) chatLogObserving{
-    NSArray *events = [chat livechatLog];
+    NSArray* events = [chat livechatLog];
     NSLog(@"events count : %d",[events count]);
-    for (ZDCChatEvent *event in events) {
+    if(_isFirstTime){
+        _isFirstTime = NO;
+        for (ZDCChatEvent *event in events) {
+            NSLog(@"check loop event chat");
+            [self handleChatLog:event];
+        }
+    }else{
+        ZDCChatEvent *event = [events lastObject];
         [self handleChatLog:event];
     }
 }

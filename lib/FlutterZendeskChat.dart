@@ -117,6 +117,16 @@ class FlutterZendeskChat {
     return res;
   }
 
+  Future<String> endingChat() async{
+    String res = await _channel.invokeMethod("endingChat");
+    onDispose();
+    return res;
+  }
+
+  Future<String> checkConnection() async{
+    return await _channel.invokeMethod("checkingConnection");
+  }
+
   Future<bool> sendingTextChat(String text) async{
     Map<String,String> data = new Map<String,String>();
     data['chatType'] = ConstantCollections.CHAT_TYPE_TEXT;

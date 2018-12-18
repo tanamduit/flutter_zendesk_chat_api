@@ -10,6 +10,8 @@ public interface ChatListener {
 
     void onChatEnded();
 
+    void onChatClosed();
+
     void onChatInitializationFailed();
 
 }

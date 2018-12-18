@@ -1,6 +1,8 @@
 package com.tanamduit.flutterzendeskchat;
 
 import android.app.Application;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +12,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
@@ -26,6 +29,8 @@ import com.tanamduit.flutterzendeskchat.listeners.ChatListener;
 import com.zendesk.belvedere.BelvedereCallback;
 import com.zendesk.belvedere.BelvedereResult;
 import com.zendesk.logger.Logger;
+import com.zopim.android.sdk.api.ChatService;
+import com.zopim.android.sdk.api.ChatServiceBinder;
 import com.zopim.android.sdk.api.ZopimChatApi;
 import com.zopim.android.sdk.data.observers.ConnectionObserver;
 import com.zopim.android.sdk.model.Account;
@@ -91,8 +96,11 @@ public class FlutterZendeskChatPlugin implements MethodCallHandler,ChatListener,
       LocalBroadcastManager.getInstance(vRegistrar.activeContext()).registerReceiver(chatInitializationTimeOut, initializationTimeoutFilter);
       vResult.success("initialized");
     }else if(call.method.equals("closeChat")) {
-      onChatEnded();
+      onChatClosed();
       vResult.success("closed");
+    }else if(call.method.equals("endingChat")){
+      onChatEnded();
+      vResult.success("end");
     }else if(call.method.equals("sendChat")) {
       String chatType = call.argument("chatType");
       if (chatType.equalsIgnoreCase("text")) {
@@ -103,6 +111,15 @@ public class FlutterZendeskChatPlugin implements MethodCallHandler,ChatListener,
       } else if (chatType.equalsIgnoreCase("file")) {
 
       }
+    }else if(call.method.equals("checkingConnection")){
+
+        if(chat == null){
+          vResult.success("uninitialized");
+        }else{
+          Connection connection = ZopimChatApi.getDataSource().getConnection();
+          vResult.success(connection.getStatus().toString());
+        }
+
     }else if(call.method.equals("playSoundNotification")) {
       try {
         Uri notif = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -159,6 +176,28 @@ public class FlutterZendeskChatPlugin implements MethodCallHandler,ChatListener,
 
   @Override
   public void onChatEnded() {
+    vRegistrar.activeContext().stopService(new Intent(vRegistrar.activeContext(), ChatService.class));
+    handler.removeCallbacksAndMessages((Object)null);
+    chatDelegate.stoppingChat();
+    if(chat != null) {
+      if(!chat.hasEnded()){
+        chat.endChat();
+      }
+      chat = null;
+    }
+    LocalBroadcastManager.getInstance(vRegistrar.activeContext()).unregisterReceiver(chatInitializationTimeOut);
+    FragmentActivity  act = (FragmentActivity)vRegistrar.activity();
+    FragmentManager manager = act.getSupportFragmentManager();
+    ChatServiceBinder binder = (ChatServiceBinder)manager.findFragmentByTag(ChatServiceBinder.class.getName());
+    if(binder != null){
+      Log.e("flutter_zendesk_chat", "chat service binder is found");
+      manager.beginTransaction().remove(binder).commit();
+    }
+  }
+
+  @Override
+  public void onChatClosed() {
+    vRegistrar.activeContext().stopService(new Intent(vRegistrar.activeContext(), ChatService.class));
     handler.removeCallbacksAndMessages((Object)null);
     chatDelegate.stoppingChat();
     if(chat != null) {

@@ -71,6 +71,7 @@ public class ChatObserver extends ChatItemsObserver {
                 obj.put("message",((VisitorMessage) item).getMessage());
                 obj.put("status",1);
             }else if(item instanceof ChatMemberEvent){
+                Log.e("flutter_zendesk_chat",((ChatMemberEvent) item).getMessage());
                 obj.put("message", ((ChatMemberEvent) item).getMessage());
             }else if(item instanceof AgentAttachment){
                 obj.put("path",((AgentAttachment) item).getAttachmentUrl().toExternalForm());

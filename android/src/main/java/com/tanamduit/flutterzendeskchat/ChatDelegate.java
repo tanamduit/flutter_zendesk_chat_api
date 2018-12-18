@@ -56,109 +56,135 @@ public class ChatDelegate implements ConnectionListener,NotificationListener {
             }
         };
         accountObserver = new AccountObserver() {
-            private final long OFFLINE_THRESHOLD = TimeUnit.SECONDS.toMillis(10L);
-            private Handler handler = new Handler();
-
-            Runnable offlineRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    Log.e("ZendeskChat","Offline Account");
-                    FlutterZendeskChatPlugin.channel.invokeMethod("accountIsOffline",null);
-                }
-            };
-
-            Runnable onlineRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    Log.e("ZendeskChat","Online Account");
-                    FlutterZendeskChatPlugin.channel.invokeMethod("accountIsOnline",null);
-                }
-            };
-
             @Override
             public void update(Account acc) {
                 //something triggering with chat
-                if(acc != null){
-                    Account.Status stat = acc.getStatus();
-                    if(stat != null){
-                        switch (stat){
-                            case OFFLINE:
-                                handler.removeCallbacks(onlineRunnable);
-                                handler.removeCallbacks(offlineRunnable);
-                                handler.postDelayed(offlineRunnable,OFFLINE_THRESHOLD);
-                                break;
-
-                            case UNKNOWN:
-                                handler.removeCallbacks(onlineRunnable);
-                                handler.removeCallbacks(offlineRunnable);
-                                handler.postDelayed(offlineRunnable,OFFLINE_THRESHOLD);
-                                break;
-
-                            case ONLINE:
-                                handler.removeCallbacks(offlineRunnable);
-                                handler.removeCallbacks(onlineRunnable);
-                                handler.post(onlineRunnable);
-                                break;
-                        }
-                    }
-                }
+                statusAccount(acc);
             }
         };
 
         vConnectionObserver = new ConnectionObserver(){
             @Override
             protected void update(Connection connection) {
-                if(!vChatApi.hasEnded()){
-                    switch (connection.getStatus()){
-                        case NO_CONNECTION:
-                                if(!vChatApi.hasEnded()) {
-                                    vChatListener.onChatInitializationFailed();
-                                }
-                                onShowNotification();
-                                onNoConnection();
-                            break;
-
-                        case DISCONNECTED:
-                            if(!vChatApi.hasEnded()) {
-                                vChatListener.onChatInitializationFailed();
-                            }
-                            onDisconnected();
-                            break;
-
-                        case CLOSED:
-                            if(!vChatApi.hasEnded()){
-                                vChatListener.onChatInitializationFailed();
-                            }
-                            onClose();
-                            break;
-
-                        case UNKNOWN:
-                            onUnknown();
-                            break;
-
-                        case CONNECTING:
-                            onConnecting();
-                            break;
-
-                        case CONNECTED:
-                            onHideNOtification();
-                            onConnected();
-                            break;
-                    }
-                }else{
-                    Log.e("flutter_zendesk_chat","Chat has ended detected by connection observer");
-                }
+                statusConnection(connection);
             }
         };
 
+        Account account = ZopimChatApi.getDataSource().getAccount();
+        if(account != null){
+            if(account.getStatus() == Account.Status.OFFLINE){
+                handler.postDelayed(new Runnable(){
+                    @Override
+                    public void run() {
+                        Log.e("ZendeskChat","Online Account");
+                        FlutterZendeskChatPlugin.channel.invokeMethod("accountIsOnline",null);
+                    }
+                },TimeUnit.SECONDS.toMillis(10L));
+            }
+        }
+
+        Connection connection = ZopimChatApi.getDataSource().getConnection();
+        if(connection != null){
+            statusConnection(connection);
+        }
         ZopimChatApi.getDataSource().addAccountObserver(accountObserver).trigger();
         ZopimChatApi.getDataSource().addAgentsObserver(agentTypingObserver).trigger();
         ZopimChatApi.getDataSource().addChatLogObserver(chatObserver).trigger();
-        ZopimChatApi.getDataSource().addConnectionObserver(vConnectionObserver).trigger();
+        ZopimChatApi.getDataSource().addConnectionObserver(vConnectionObserver);
         LocalBroadcastManager.getInstance(vRegistrar.activeContext()).registerReceiver(vChatTimeoutReceiver,new IntentFilter("chat.action.TIMEOUT"));
         chatListener.onChatInitialized();
     }
 
+    Runnable offlineRunnable = new Runnable() {
+        @Override
+        public void run() {
+            Log.e("ZendeskChat","Offline Account");
+            FlutterZendeskChatPlugin.channel.invokeMethod("accountIsOffline",null);
+        }
+    };
+
+    Runnable onlineRunnable = new Runnable() {
+        @Override
+        public void run() {
+            Log.e("ZendeskChat","Online Account");
+            FlutterZendeskChatPlugin.channel.invokeMethod("accountIsOnline",null);
+        }
+    };
+
+
+    public void statusAccount(Account acc){
+        if(acc != null){
+            Account.Status stat = acc.getStatus();
+            if(stat != null){
+                switch (stat){
+                    case OFFLINE:
+                        handler.removeCallbacks(onlineRunnable);
+                        handler.removeCallbacks(offlineRunnable);
+                        handler.post(offlineRunnable);
+                        break;
+
+                    case UNKNOWN:
+                        handler.removeCallbacks(onlineRunnable);
+                        handler.removeCallbacks(offlineRunnable);
+                        handler.post(offlineRunnable);
+                        break;
+
+                    case ONLINE:
+                        handler.removeCallbacks(offlineRunnable);
+                        handler.removeCallbacks(onlineRunnable);
+                        handler.post(onlineRunnable);
+                        break;
+                }
+            }
+        }
+    }
+
+    public void statusConnection(Connection connection){
+
+        if(!vChatApi.hasEnded()){
+            switch (connection.getStatus()){
+                case NO_CONNECTION:
+                    if(!vChatApi.hasEnded()) {
+                        vChatListener.onChatInitializationFailed();
+                    }
+                    onShowNotification();
+                    onNoConnection();
+                    break;
+
+                case DISCONNECTED:
+                    if(!vChatApi.hasEnded()) {
+                        vChatListener.onChatInitializationFailed();
+                    }
+                    onDisconnected();
+                    break;
+
+                case CLOSED:
+                    if(!vChatApi.hasEnded()){
+                        vChatListener.onChatInitializationFailed();
+                    }
+                    onClose();
+                    break;
+
+                case UNKNOWN:
+                    onUnknown();
+                    break;
+
+                case CONNECTING:
+                    onConnecting();
+                    break;
+
+                case CONNECTED:
+                    onHideNOtification();
+                    onConnected();
+                    break;
+            }
+        }else{
+            Log.e("flutter_zendesk_chat","Chat has ended detected by connection observer");
+            onDisconnected();
+
+        }
+
+    }
 
     public void stoppingChat(){
         ZopimChatApi.getDataSource().deleteAccountObserver(accountObserver);
