@@ -22,7 +22,12 @@ ZDCChatAPI *chat;
   }else if([@"attachmentFile" isEqualToString: call.method]){
       [self sendingMessage:call result:result];
   }else if([@"closeChat" isEqualToString:call.method]){
-      [self closingChat:result];
+      ZDCConnectionStatus *connection = [chat connectionStatus];
+      if(connection == ZDCConnectionStatusConnected){
+          [self closingChat:result];
+      }else{
+          [self endingChat:result];
+      }
   }else if([@"endingChat" isEqualToString:call.method]){
       [self endingChat:result];
   }else if([@"transcriptEmail" isEqualToString:call.method]){
@@ -64,19 +69,24 @@ ZDCChatAPI *chat;
        
        
 - (void)sendingMessage:(FlutterMethodCall*)call result:(FlutterResult)result{
-    NSString *type = call.arguments[@"chatType"];
-    if([@"text" isEqualToString:type]){
-        NSString *msg = call.arguments[@"chatText"];
-        [chat sendChatMessage:msg];
-        result(@YES);
-    }else if([@"file" isEqualToString:type]){
-        NSString *pth = call.arguments[@"chatFile"];
-        NSString *name = call.arguments[@"nameFile"];
-        UIImage *image = [UIImage imageWithContentsOfFile:pth];
-        NSLog(@"path file : %@",pth);
-        NSLog(@"name : %@",name);
-        [chat uploadImage:image name:name];
-        result(@"uploading");
+    ZDCConnectionStatus *connection = [chat connectionStatus];
+    if(connection == ZDCConnectionStatusConnected ){
+        NSString *type = call.arguments[@"chatType"];
+        if([@"text" isEqualToString:type]){
+            NSString *msg = call.arguments[@"chatText"];
+            [chat sendChatMessage:msg];
+            result(@YES);
+        }else if([@"file" isEqualToString:type]){
+            NSString *pth = call.arguments[@"chatFile"];
+            NSString *name = call.arguments[@"nameFile"];
+            UIImage *image = [UIImage imageWithContentsOfFile:pth];
+            NSLog(@"path file : %@",pth);
+            NSLog(@"name : %@",name);
+            [chat uploadImage:image name:name];
+            result(@"uploading");
+        }
+    }else{
+        [self connectionState];
     }
 }
 
