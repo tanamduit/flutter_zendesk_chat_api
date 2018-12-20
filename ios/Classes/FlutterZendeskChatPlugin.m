@@ -2,6 +2,8 @@
 #import <ZDCChatAPI/ZDCLog.h>
 #import <ZDCChatAPI/ZDCChatAPI.h>
 
+
+
 @implementation FlutterZendeskChatPlugin
 
 ZDCChatAPI *chat;
@@ -210,13 +212,21 @@ ZDCChatAPI *chat;
     NSLog(@"events count : %d",[events count]);
     if(_isFirstTime){
         _isFirstTime = NO;
+        self.lastId = nil;
+        NSLog(@"its bulking chat");
         for (ZDCChatEvent *event in events) {
             NSLog(@"check loop event chat");
             [self handleChatLog:event];
         }
     }else{
+        NSLog(@"its only last chat");
         ZDCChatEvent *event = [events lastObject];
-        [self handleChatLog:event];
+        if([self.lastId isEqualToString:event.eventId]){
+            NSLog(@"chat observer duplicate entry");
+        }else{
+            self.lastId = event.eventId;
+            [self handleChatLog:event];
+        }
     }
 }
 
@@ -378,5 +388,6 @@ ZDCChatAPI *chat;
     NSString *newStr = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
     return newStr;
 }
+
 
 @end

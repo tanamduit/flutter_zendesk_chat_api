@@ -29,6 +29,7 @@ public class ChatObserver extends ChatItemsObserver {
         super(context);
     }
     boolean isFirst = true;
+    String lastId = null;
     @Override
     protected void updateChatItems(TreeMap<String, RowItem> treeMap) {
         updateChat(treeMap);
@@ -37,8 +38,10 @@ public class ChatObserver extends ChatItemsObserver {
     private void updateChat(TreeMap<String, RowItem> chats){
         Log.e("Chat Observer","observing chat with size :"+ chats.size());
         Iterator i = chats.values().iterator();
-        if(isFirst || chats.size() == 0){
+        if(isFirst){
             isFirst = false;
+            lastId = null;
+            Log.e("flutter_zendesk_chat","its chat bulking");
             while (i.hasNext()){
                 RowItem item = (RowItem)i.next();
                 Log.e("Chat Observer", "Chat type : " + item.getType().name());
@@ -47,12 +50,24 @@ public class ChatObserver extends ChatItemsObserver {
                 FlutterZendeskChatPlugin.channel.invokeMethod("observingChat", data);
             }
         }else {
-            RowItem last = chats.lastEntry().getValue();
-            if(last != null) {
-                Log.e("Chat Observer", "Chat type : " + last.getType().name());
-                Map<String, String> data = new HashMap<>();
-                data.put("rowItem", rowItemToString(last));
-                FlutterZendeskChatPlugin.channel.invokeMethod("observingChat", data);
+            if(chats.size() > 0) {
+                RowItem last = chats.lastEntry().getValue();
+                Log.e("flutter_zendesk_chat","its only last chat");
+                if (last != null) {
+                    if(lastId == null) {
+                        lastId = last.getId();
+                        Map<String, String> data = new HashMap<>();
+                        data.put("rowItem", rowItemToString(last));
+                        FlutterZendeskChatPlugin.channel.invokeMethod("observingChat", data);
+                    }else if(!lastId.equals(last.getId())){
+                        lastId = last.getId();
+                        Map<String, String> data = new HashMap<>();
+                        data.put("rowItem", rowItemToString(last));
+                        FlutterZendeskChatPlugin.channel.invokeMethod("observingChat", data);
+                    }else{
+                        Log.e("flutter_zendesk_chat","skipped chat observer cause  duplicate id");
+                    }
+                }
             }
         }
     }

@@ -11,7 +11,6 @@ class VisitorChatMessage extends DetailContentChatModel{
   int _status;
 
   VisitorChatMessage.fromJson(Map<String,dynamic> data){
-      print(json.encode(data));
       setMapParent(data);
         _message = data['message'];
         _status =  data["status"] == null ? 0 : int.parse(data['status'].toString());

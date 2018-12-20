@@ -98,9 +98,15 @@ public class FlutterZendeskChatPlugin implements MethodCallHandler,ChatListener,
     }else if(call.method.equals("closeChat")) {
       onChatClosed();
       vResult.success("closed");
-    }else if(call.method.equals("endingChat")){
+    }else if(call.method.equals("endingChat")) {
       onChatEnded();
       vResult.success("end");
+    }else if(call.method.equals("transcriptEmail")){
+      if(chat != null){
+        String email = call.argument("email");
+        chat.emailTranscript(email);
+      }
+      vResult.success(true);
     }else if(call.method.equals("sendChat")) {
       String chatType = call.argument("chatType");
       if (chatType.equalsIgnoreCase("text")) {
@@ -177,6 +183,7 @@ public class FlutterZendeskChatPlugin implements MethodCallHandler,ChatListener,
   @Override
   public void onChatEnded() {
     vRegistrar.activeContext().stopService(new Intent(vRegistrar.activeContext(), ChatService.class));
+    Log.e("flutter_zendesk_chat","ending chat");
     handler.removeCallbacksAndMessages((Object)null);
     chatDelegate.stoppingChat();
     if(chat != null) {
@@ -185,6 +192,8 @@ public class FlutterZendeskChatPlugin implements MethodCallHandler,ChatListener,
       }
       chat = null;
     }
+    ZopimChatApi.getDataSource().deleteObservers();
+    ZopimChatApi.getDataSource().clear();
     LocalBroadcastManager.getInstance(vRegistrar.activeContext()).unregisterReceiver(chatInitializationTimeOut);
     FragmentActivity  act = (FragmentActivity)vRegistrar.activity();
     FragmentManager manager = act.getSupportFragmentManager();
@@ -198,12 +207,20 @@ public class FlutterZendeskChatPlugin implements MethodCallHandler,ChatListener,
   @Override
   public void onChatClosed() {
     vRegistrar.activeContext().stopService(new Intent(vRegistrar.activeContext(), ChatService.class));
+    Log.e("flutter_zendesk_chat","Closing chat");
     handler.removeCallbacksAndMessages((Object)null);
     chatDelegate.stoppingChat();
     if(chat != null) {
       chat = null;
     }
     LocalBroadcastManager.getInstance(vRegistrar.activeContext()).unregisterReceiver(chatInitializationTimeOut);
+    FragmentActivity  act = (FragmentActivity)vRegistrar.activity();
+    FragmentManager manager = act.getSupportFragmentManager();
+    ChatServiceBinder binder = (ChatServiceBinder)manager.findFragmentByTag(ChatServiceBinder.class.getName());
+    if(binder != null){
+      Log.e("flutter_zendesk_chat", "chat service binder is found");
+      manager.beginTransaction().remove(binder).commit();
+    }
   }
 
   @Override
