@@ -89,7 +89,7 @@ public class FlutterZendeskChatPlugin implements MethodCallHandler,ChatListener,
       .name(name)
       .phoneNumber(phone)
       .build());
-      ZopimChatApi.setPushToken(fcm);
+      //ZopimChatApi.setPushToken(fcm);
       ChatApi tmpChat = ZopimChatApi.start((FragmentActivity) vRegistrar.activity());
       onChatLoaded(tmpChat);
       IntentFilter initializationTimeoutFilter = new IntentFilter("chat.action.INITIALIZATION_TIMEOUT");

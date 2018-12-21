@@ -34,11 +34,10 @@ ZDCChatAPI *chat;
       [self endingChat:result];
   }else if([@"transcriptEmail" isEqualToString:call.method]){
       [self transcriptChat:call result:result];
-  } else {
+  }else{
     result(FlutterMethodNotImplemented);
   }
 }
-
 
 - (void)transcriptChat:(FlutterMethodCall*)call result:(FlutterResult)result{
     NSString *email = call.arguments[@"email"];
