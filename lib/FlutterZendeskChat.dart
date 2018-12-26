@@ -112,15 +112,13 @@ class FlutterZendeskChat {
   }
 
   Future<String> closingChat() async{
-    String res = await _channel.invokeMethod("closeChat");
     onDispose();
-    return res;
+    return await _channel.invokeMethod("closeChat");
   }
 
   Future<String> endingChat() async{
-    String res = await _channel.invokeMethod("endingChat");
     onDispose();
-    return res;
+    return await _channel.invokeMethod("endingChat");
   }
 
   Future<String> checkConnection() async{

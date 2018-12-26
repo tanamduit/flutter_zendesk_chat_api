@@ -182,26 +182,9 @@ public class FlutterZendeskChatPlugin implements MethodCallHandler,ChatListener,
 
   @Override
   public void onChatEnded() {
-    vRegistrar.activeContext().stopService(new Intent(vRegistrar.activeContext(), ChatService.class));
-    Log.e("flutter_zendesk_chat","ending chat");
-    handler.removeCallbacksAndMessages((Object)null);
-    chatDelegate.stoppingChat();
-    if(chat != null) {
-      if(!chat.hasEnded()){
-        chat.endChat();
-      }
-      chat = null;
-    }
+    onChatClosed();
     ZopimChatApi.getDataSource().deleteObservers();
     ZopimChatApi.getDataSource().clear();
-    LocalBroadcastManager.getInstance(vRegistrar.activeContext()).unregisterReceiver(chatInitializationTimeOut);
-    FragmentActivity  act = (FragmentActivity)vRegistrar.activity();
-    FragmentManager manager = act.getSupportFragmentManager();
-    ChatServiceBinder binder = (ChatServiceBinder)manager.findFragmentByTag(ChatServiceBinder.class.getName());
-    if(binder != null){
-      Log.e("flutter_zendesk_chat", "chat service binder is found");
-      manager.beginTransaction().remove(binder).commit();
-    }
   }
 
   @Override
@@ -211,6 +194,9 @@ public class FlutterZendeskChatPlugin implements MethodCallHandler,ChatListener,
     handler.removeCallbacksAndMessages((Object)null);
     chatDelegate.stoppingChat();
     if(chat != null) {
+      if(!chat.hasEnded()){
+        chat.endChat();
+      }
       chat = null;
     }
     LocalBroadcastManager.getInstance(vRegistrar.activeContext()).unregisterReceiver(chatInitializationTimeOut);
