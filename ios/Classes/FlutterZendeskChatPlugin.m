@@ -255,6 +255,10 @@ ZDCChatAPI *chat;
             }
             break;
             
+        case ZDCChatEventTypeSystemMessage:
+            [channel invokeMethod:@"observingChat" arguments:@{@"rowItem":[self getTextSystemMessage:event]}];
+            break;
+            
         case ZDCChatEventTypeAgentUpload:
             [channel invokeMethod:@"observingChat" arguments:@{@"rowItem":[self getTextAgentAttachment:event]}];
             break;
@@ -314,6 +318,28 @@ ZDCChatAPI *chat;
     }
 }
 
+
+-(NSString *)getTextSystemMessage:(ZDCChatEvent*)data{
+    NSLog(@"queue: %@",data.visitorQueue);
+    NSLog(@"message: %@",data.message);
+    NSLog(@"id: %@",data.eventId);
+    NSLog(@"timestamp: %@",data.timestamp);
+    NSDictionary *dict = @{
+       @"id":data.eventId,
+       @"participantId":@"0",
+       @"type":@"SYSTEM_MESSAGE",
+       @"displayName":@"tanamduit",
+       @"timeStamp":data.timestamp,
+       @"message":data.message
+    };
+    NSError *error;
+    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:&error];
+    if(error){
+        NSLog(@"gagal serialization");
+    }
+    NSString *newStr = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    return newStr;
+}
 
 -(NSString *)getTextAgentAttachment:(ZDCChatEvent*)data{
     NSLog(@"path: %@",data.attachment.url);

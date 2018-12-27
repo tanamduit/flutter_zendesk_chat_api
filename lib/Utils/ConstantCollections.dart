@@ -25,4 +25,5 @@ class ConstantCollections{
   static const String TYPE_MEMBER_EVENT = "MEMBER_EVENT";
   static const String TYPE_AGENT_ATTACHMENT = "AGENT_ATTACHMENT";
   static const String TYPE_VISITOR_ATTACHMENT = "VISITOR_ATTACHMENT";
+  static const String TYPE_SYSTEM_MESSAGE = "SYSTEM_MESSAGE";
 }

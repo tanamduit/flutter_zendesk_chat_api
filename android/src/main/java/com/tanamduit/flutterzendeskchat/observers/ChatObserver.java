@@ -8,6 +8,8 @@ import com.tanamduit.flutterzendeskchat.FlutterZendeskChatPlugin;
 import com.zopim.android.sdk.data.observers.ChatItemsObserver;
 import com.zopim.android.sdk.model.items.AgentAttachment;
 import com.zopim.android.sdk.model.items.AgentMessage;
+import com.zopim.android.sdk.model.items.AgentOptions;
+import com.zopim.android.sdk.model.items.ChatEvent;
 import com.zopim.android.sdk.model.items.ChatMemberEvent;
 import com.zopim.android.sdk.model.items.RowItem;
 import com.zopim.android.sdk.model.items.VisitorAttachment;
@@ -77,7 +79,11 @@ public class ChatObserver extends ChatItemsObserver {
         try {
             obj.put("id",item.getId());
             obj.put("participantId",item.getParticipantId());
-            obj.put("type",item.getType());
+            if(item instanceof ChatEvent){
+                obj.put("type","SYSTEM_MESSAGE");
+            }else {
+                obj.put("type", item.getType());
+            }
             obj.put("displayName", item.getDisplayName());
             obj.put("timeStamp",item.getTimestamp());
             if(item instanceof AgentMessage){
@@ -88,11 +94,13 @@ public class ChatObserver extends ChatItemsObserver {
             }else if(item instanceof ChatMemberEvent){
                 Log.e("flutter_zendesk_chat",((ChatMemberEvent) item).getMessage());
                 obj.put("message", ((ChatMemberEvent) item).getMessage());
-            }else if(item instanceof AgentAttachment){
-                obj.put("path",((AgentAttachment) item).getAttachmentUrl().toExternalForm());
-                obj.put("thumbnailPath",((AgentAttachment) item).getAttachmentUrl().toExternalForm());
+            }else if(item instanceof AgentAttachment) {
+                obj.put("path", ((AgentAttachment) item).getAttachmentUrl().toExternalForm());
+                obj.put("thumbnailPath", ((AgentAttachment) item).getAttachmentUrl().toExternalForm());
                 obj.put("attachmentName", ((AgentAttachment) item).getAttachmentName());
                 obj.put("attachmentSize", ((AgentAttachment) item).getAttachmentSize());
+            }else if(item instanceof AgentOptions){
+                Log.e("agent_options","message"+ ((AgentOptions) item).toString());
             }else if(item instanceof VisitorAttachment){
                 Log.e("visitor-attachment", ((VisitorAttachment)item).toString());
                 String pth = "-";
@@ -109,6 +117,10 @@ public class ChatObserver extends ChatItemsObserver {
                 obj.put("url", pth);
                 obj.put("ekstension",".jpg");
                 obj.put("progress", String.valueOf(((VisitorAttachment) item).getUploadProgress()));
+            }else if(item instanceof ChatEvent){
+                Log.e("chat-event","message : "+((ChatEvent)item).getMessage());
+                obj.put("message", ((ChatEvent) item).getMessage());
+
             }
             return obj.toString();
         } catch (JSONException e) {
