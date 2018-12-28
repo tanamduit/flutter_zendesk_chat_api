@@ -11,6 +11,7 @@ import com.zopim.android.sdk.model.items.AgentMessage;
 import com.zopim.android.sdk.model.items.AgentOptions;
 import com.zopim.android.sdk.model.items.ChatEvent;
 import com.zopim.android.sdk.model.items.ChatMemberEvent;
+import com.zopim.android.sdk.model.items.ChatRating;
 import com.zopim.android.sdk.model.items.RowItem;
 import com.zopim.android.sdk.model.items.VisitorAttachment;
 import com.zopim.android.sdk.model.items.VisitorMessage;
@@ -46,10 +47,12 @@ public class ChatObserver extends ChatItemsObserver {
             Log.e("flutter_zendesk_chat","its chat bulking");
             while (i.hasNext()){
                 RowItem item = (RowItem)i.next();
-                Log.e("Chat Observer", "Chat type : " + item.getType().name());
-                Map<String, String> data = new HashMap<>();
-                data.put("rowItem", rowItemToString(item));
-                FlutterZendeskChatPlugin.channel.invokeMethod("observingChat", data);
+                if(!(item instanceof ChatRating)){
+                    Log.e("Chat Observer", "Chat type : " + item.getType().name());
+                    Map<String, String> data = new HashMap<>();
+                    data.put("rowItem", rowItemToString(item));
+                    FlutterZendeskChatPlugin.channel.invokeMethod("observingChat", data);
+                }
             }
         }else {
             if(chats.size() > 0) {
@@ -75,6 +78,7 @@ public class ChatObserver extends ChatItemsObserver {
     }
 
     private String rowItemToString(RowItem item){
+        Log.e("flutter_zendesk_chat","rowItem message : "+item.toString());
         JSONObject obj = new JSONObject();
         try {
             obj.put("id",item.getId());
@@ -120,7 +124,9 @@ public class ChatObserver extends ChatItemsObserver {
             }else if(item instanceof ChatEvent){
                 Log.e("chat-event","message : "+((ChatEvent)item).getMessage());
                 obj.put("message", ((ChatEvent) item).getMessage());
-
+            }else if(item instanceof ChatRating){
+                obj.put("rating", ((ChatRating) item).getRating().getValue());
+                obj.put("comment",((ChatRating) item).getComment());
             }
             return obj.toString();
         } catch (JSONException e) {

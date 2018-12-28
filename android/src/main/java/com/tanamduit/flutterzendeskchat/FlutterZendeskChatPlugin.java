@@ -34,6 +34,7 @@ import com.zopim.android.sdk.api.ChatServiceBinder;
 import com.zopim.android.sdk.api.ZopimChatApi;
 import com.zopim.android.sdk.data.observers.ConnectionObserver;
 import com.zopim.android.sdk.model.Account;
+import com.zopim.android.sdk.model.ChatLog;
 import com.zopim.android.sdk.model.Connection;
 import com.zopim.android.sdk.api.ChatApi;
 import com.zopim.android.sdk.model.Department;
@@ -137,13 +138,37 @@ public class FlutterZendeskChatPlugin implements MethodCallHandler,ChatListener,
         e.printStackTrace();
         vResult.success(false);
       }
-    }else if(call.method.equals("attachmentFile")){
+    }else if(call.method.equals("attachmentFile")) {
       String pth = call.argument("chatFile");
       String name = call.argument("nameFile");
       File file = new File(pth);
       chat.send(file);
+    }else if(call.method.equals("sendRating")) {
+      String rating = call.argument("rating");
+      if (chat != null) {
+        chat.sendChatRating(getRating(rating));
+      }
+      vResult.success("rated");
+    }else if(call.method.equals("sendComment")){
+      String comment = call.argument("comment");
+      if(chat != null){
+        chat.sendChatComment(comment);
+      }
+      vResult.success("commented");
     } else {
       vResult.notImplemented();
+    }
+  }
+
+  ChatLog.Rating getRating(String rt){
+    if(rt.equals("good")){
+      return ChatLog.Rating.GOOD;
+    }else if(rt.equals("bad")){
+      return  ChatLog.Rating.BAD;
+    }else if(rt.equals("unknown")){
+      return  ChatLog.Rating.UNKNOWN;
+    }else{
+      return  ChatLog.Rating.UNRATED;
     }
   }
 

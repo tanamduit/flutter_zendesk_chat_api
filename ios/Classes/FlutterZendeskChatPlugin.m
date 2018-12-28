@@ -21,6 +21,14 @@ ZDCChatAPI *chat;
       [self initiateChat:call withResult:result];
   } else if([@"sendChat" isEqualToString:call.method]){
       [self sendingMessage:call result:result];
+  }else if([@"sendRating" isEqualToString:call.method]){
+      NSString *rat = call.arguments[@"rating"];
+      [chat sendChatRating:[self getRating:rat]];
+      result(@"rated");
+  }else if([@"sendComment" isEqualToString:call.method]){
+      NSString *com = call.arguments[@"comment"];
+      [chat sendChatRatingComment:com];
+      result(@"commented");
   }else if([@"attachmentFile" isEqualToString: call.method]){
       [self sendingMessage:call result:result];
   }else if([@"closeChat" isEqualToString:call.method]){
@@ -215,7 +223,9 @@ ZDCChatAPI *chat;
         NSLog(@"its bulking chat");
         for (ZDCChatEvent *event in events) {
             NSLog(@"check loop event chat");
-            [self handleChatLog:event];
+            if(event.type != ZDCChatEventTypeRating){
+                [self handleChatLog:event];
+            }
         }
     }else{
         NSLog(@"its only last chat");
@@ -261,6 +271,10 @@ ZDCChatAPI *chat;
             
         case ZDCChatEventTypeAgentUpload:
             [channel invokeMethod:@"observingChat" arguments:@{@"rowItem":[self getTextAgentAttachment:event]}];
+            break;
+        
+        case ZDCChatEventTypeRating:
+            [channel invokeMethod:@"observingChat" arguments:@{@"rowItem":[self getRequestRating:event]}];
             break;
             
         default:
@@ -318,6 +332,69 @@ ZDCChatAPI *chat;
     }
 }
 
+-(NSString *) getRequestRating:(ZDCChatEvent*)data{
+    NSLog(@"id: %@",data.eventId);
+    NSLog(@"display name: %@",data.displayName);
+    NSLog(@"timeStamp : %@",data.timestamp);
+    NSLog(@"rating : %@",[self getRatingString:data]);
+    NSLog(@"comment : %@",data.ratingComment);
+    
+    NSDictionary *dict = @{
+       @"id":data.eventId,
+       @"participantId":@"0",
+       @"type":@"CHAT_RATING",
+       @"displayName":data.displayName,
+       @"timeStamp":data.timestamp,
+       @"rating":[self getRatingString:data],
+       @"comment": data.ratingComment == nil ? @"" : data.ratingComment
+    };
+    
+    NSError *error;
+    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:&error];
+    if(error){
+        NSLog(@"gagal serialization");
+    }
+    NSString *newStr = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    return newStr;
+}
+
+
+-(NSString *)getRatingString:(ZDCChatEvent*)data{
+    switch (data.rating) {
+        case ZDCChatRatingUnrated:
+            return @"unknown";
+            break;
+        
+        case ZDCChatRatingNone:
+            return @"unrated";
+            break;
+            
+        case ZDCChatRatingGood:
+            return @"good";
+            break;
+            
+        case ZDCChatRatingBad:
+            return @"bad";
+            break;
+            
+        default:
+            return @"unrated";
+            break;
+    }
+}
+
+
+-(ZDCChatRating)getRating:(NSString*)rat{
+    if([@"good" isEqualToString:rat]){
+        return ZDCChatRatingGood;
+    }else if([@"bad" isEqualToString:rat]){
+        return ZDCChatRatingBad;
+    }else if([@"unknown" isEqualToString:rat]){
+        return ZDCChatRatingNone;
+    }else{
+        return ZDCChatRatingUnrated;
+    }
+}
 
 -(NSString *)getTextSystemMessage:(ZDCChatEvent*)data{
     NSLog(@"queue: %@",data.visitorQueue);

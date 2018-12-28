@@ -26,4 +26,12 @@ class ConstantCollections{
   static const String TYPE_AGENT_ATTACHMENT = "AGENT_ATTACHMENT";
   static const String TYPE_VISITOR_ATTACHMENT = "VISITOR_ATTACHMENT";
   static const String TYPE_SYSTEM_MESSAGE = "SYSTEM_MESSAGE";
+  static const String TYPE_CHAT_RATING = "CHAT_RATING";
+
+
+  static const String RATING_GOOD = "good";
+  static const String RATING_BAD = "bad";
+  static const String RATING_UNKNOWN ="unknown";
+  static const String RATING_UNRATED = "unrated";
+  
 }

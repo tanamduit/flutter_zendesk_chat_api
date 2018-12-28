@@ -146,6 +146,17 @@ class FlutterZendeskChat {
     return await _channel.invokeMethod("transcriptEmail",data);
   }
 
+  Future<bool> sendRatingAndComment(String rating, String comment) async{
+    Map<String,String> data = new Map<String,String>();
+    data['rating'] = rating;
+    data['comment'] = comment;
+    await _channel.invokeMethod("sendRating", data);
+    if(comment.trim().length > 0){
+      await _channel.invokeMethod("sendComment", data);
+    }
+    return true;
+  }
+
   Stream<Null> get onAgentNotAvailable => _agentNotAvailable.stream;
   Stream<String> get onFailedVisitorUploadItem => _failedVisitorUploadItem.stream;
   Stream<Null> get onAgentIsTyping => _agentIsTyping.stream;
@@ -183,5 +194,4 @@ class FlutterZendeskChat {
   static Future<bool> playSoundNotification() async{
     return await _channel.invokeMethod("playSoundNotification");
   }
-
 }
