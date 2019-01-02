@@ -7,6 +7,7 @@
 @implementation FlutterZendeskChatPlugin
 
 ZDCChatAPI *chat;
+NSString *lastId;
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   channel = [FlutterMethodChannel
@@ -128,7 +129,7 @@ ZDCChatAPI *chat;
     [chat addObserver:self forTimeoutEvents:@selector(chatIsTimeout)];
     [chat addObserver:self forChatLogEvents:@selector(chatLogObserving)];
     [chat addObserver:self forAgentEvents:@selector(agentState)];
-    [chat addObserver:self forUploadEvents:@selector(uploadingFile)];
+    //[chat addObserver:self forUploadEvents:@selector(uploadingFile)];
     [chat addObserver:self forAccountEvents:@selector(accountState)];
     result(@"initialized");
 }
@@ -199,7 +200,6 @@ ZDCChatAPI *chat;
 - (void) uploadingFile{
     //uploading file
     NSLog(@"file uploaded");
-    [self chatLogObserving];
 }
 
 - (void) accountState{
@@ -215,27 +215,41 @@ ZDCChatAPI *chat;
 }
 
 - (void) chatLogObserving{
-    NSArray* events = [chat livechatLog];
-    NSLog(@"events count : %d",[events count]);
-    if(_isFirstTime){
-        _isFirstTime = NO;
-        self.lastId = nil;
-        NSLog(@"its bulking chat");
-        for (ZDCChatEvent *event in events) {
-            NSLog(@"check loop event chat");
-            if(event.type != ZDCChatEventTypeRating){
-                [self handleChatLog:event];
+    @try{
+        NSArray* events = [chat livechatLog];
+        NSLog(@"events count : %d",[events count]);
+        if(_isFirstTime){
+            _isFirstTime = NO;
+            lastId = nil;
+            NSLog(@"its bulking chat");
+            if([events count] > 0){
+                for (ZDCChatEvent *event in events) {
+                    lastId = event.eventId;
+                    if(event.type != ZDCChatEventTypeRating){
+                        [self handleChatLog:event];
+                    }
+                }
+            }
+        }else{
+            NSLog(@"its only last chat");
+            ZDCChatEvent* event = [events lastObject];
+            if(event != nil){
+                if(lastId != nil){
+                    if([lastId isEqualToString:event.eventId]){
+                        NSLog(@"chat observer duplicate entry");
+                    }else{
+                        //NSLog(@"different id with type : %@", event.type);
+                        lastId = event.eventId;
+                        [self handleChatLog:event];
+                    }
+                }else{
+                    lastId = event.eventId;
+                    [self handleChatLog:event];
+                }
             }
         }
-    }else{
-        NSLog(@"its only last chat");
-        ZDCChatEvent *event = [events lastObject];
-        if([self.lastId isEqualToString:event.eventId]){
-            NSLog(@"chat observer duplicate entry");
-        }else{
-            self.lastId = event.eventId;
-            [self handleChatLog:event];
-        }
+    }@catch(NSException *e){
+        NSLog(@"crash : %@",e);
     }
 }
 
@@ -261,6 +275,7 @@ ZDCChatAPI *chat;
         case ZDCChatEventTypeVisitorUpload:
            
             if([self getUploadVisitor:event] != nil){
+                NSLog(@"trying to invoking visitor upload");
                 [channel invokeMethod:@"observingChat" arguments:@{@"rowItem":[self getUploadVisitor:event]}];
             }
             break;
@@ -303,7 +318,7 @@ ZDCChatAPI *chat;
         if(data.displayName != nil){
             displayName = data.displayName;
         }
-        
+        NSLog(@"wrapping respon visitor upload");
         NSDictionary *dict = @{
            @"id":data.eventId,
            @"participantId":@"0",
@@ -313,13 +328,14 @@ ZDCChatAPI *chat;
            @"url":attachmentUrl,
            @"message":msg,
            @"ekstension":ekstension,
-           @"progress": [NSNumber numberWithFloat:data.fileUpload.progress]
+           @"progress": [NSNumber numberWithFloat:data.fileUpload != nil ? data.fileUpload.progress : 0.0]
         };
         
         NSError *error;
         NSData* jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:&error];
         if(error){
             NSLog(@"gagal serialize");
+            NSLog(error);
             return nil;
         }
         NSString *newStr = [[NSString alloc] initWithData: jsonData encoding:NSUTF8StringEncoding];

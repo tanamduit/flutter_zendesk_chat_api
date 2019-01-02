@@ -70,7 +70,17 @@ public class ChatObserver extends ChatItemsObserver {
                         data.put("rowItem", rowItemToString(last));
                         FlutterZendeskChatPlugin.channel.invokeMethod("observingChat", data);
                     }else{
-                        Log.e("flutter_zendesk_chat","skipped chat observer cause  duplicate id");
+                        if(last instanceof VisitorAttachment) {
+                            if(((VisitorAttachment) last).getUploadProgress() > 0) {
+                                Map<String, String> data = new HashMap<>();
+                                data.put("rowItem", rowItemToString(last));
+                                FlutterZendeskChatPlugin.channel.invokeMethod("observingChat", data);
+                            }else{
+                                Log.e("flutter_zendesk_chat", "skipped chat observer cause  duplicate id");
+                            }
+                        }else {
+                            Log.e("flutter_zendesk_chat", "skipped chat observer cause  duplicate id");
+                        }
                     }
                 }
             }
@@ -109,6 +119,8 @@ public class ChatObserver extends ChatItemsObserver {
                 Log.e("visitor-attachment", ((VisitorAttachment)item).toString());
                 String pth = "-";
                 try{
+                    Log.e("visitor-attachment","absolute path image : "+((VisitorAttachment) item).getFile().getAbsolutePath());
+                    Log.e("visitor-attachment","path image : "+((VisitorAttachment) item).getFile().getPath());
                     pth = ((VisitorAttachment) item).getFile().getPath();
                     if(pth == null){
                         pth = "-";

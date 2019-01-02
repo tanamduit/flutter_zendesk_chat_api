@@ -18,6 +18,11 @@ class VisitorChatAttachment extends DetailContentChatModel{
     _path = data['url'];
     _ekstension = data['ekstension'];
     _progress = double.parse(data['progress'].toString());
+    if(Platform.isAndroid){
+      if(_progress > 0 && _progress < 100){
+        _progress = 100.0;
+      }
+    }
   }
 
   VisitorChatAttachment.setFromSending({
