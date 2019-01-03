@@ -115,6 +115,19 @@ public class ChatObserver extends ChatItemsObserver {
                 obj.put("attachmentSize", ((AgentAttachment) item).getAttachmentSize());
             }else if(item instanceof AgentOptions){
                 Log.e("agent_options","message"+ ((AgentOptions) item).toString());
+                obj.put("message", ((AgentOptions) item).getMessage());
+                String opt="";
+                for(int i=0; i < ((AgentOptions) item).getOptions().length;i++){
+                    if(i == ((AgentOptions)item).getOptions().length - 1){
+                        opt+= ((AgentOptions) item).getOptions()[i];
+                    }else{
+                        opt+=((AgentOptions) item).getOptions()[i]+"#";
+                    }
+                }
+                obj.put("options", opt);
+                if(((AgentOptions) item).isDisabled()){
+                    obj.put("selectedOption", opt);
+                }
             }else if(item instanceof VisitorAttachment){
                 Log.e("visitor-attachment", ((VisitorAttachment)item).toString());
                 String pth = "-";

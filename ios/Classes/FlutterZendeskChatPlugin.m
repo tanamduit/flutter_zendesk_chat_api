@@ -489,16 +489,66 @@ NSString *lastId;
     if(data.type == ZDCChatEventTypeVisitorMessage){
         type = @"VISITOR_MESSAGE";
     }else if(data.type == ZDCChatEventTypeAgentMessage){
-        type = @"AGENT_MESSAGE";
+        if(data.options == nil){
+            type = @"AGENT_MESSAGE";
+        }else{
+            if([data.options count] > 0){
+                type = @"AGENT_OPTIONS";
+            }else{
+                type = @"AGENT_MESSAGE";
+            }
+        }
     }
-    NSDictionary *dict = @{@"id":data.eventId,
-                           @"participantId":@"0",
-                           @"type":type,
-                           @"displayName":data.displayName,
-                           @"timeStamp":data.timestamp,
-                           @"message":data.message,
-                           @"status":@"1"
-                           };
+    NSDictionary *dict;
+    if([@"AGENT_OPTIONS" isEqualToString:type]){
+        NSString *opt = [data.options componentsJoinedByString:@"#"];
+        if(data.selectedOptionIndex != nil){
+            NSLog(@"data selected options : %zd",data.selectedOptionIndex);
+            if(data.selectedOptionIndex < [data.options count]){
+                NSString *selected = [data.options objectAtIndex:data.selectedOptionIndex];
+                dict = @{@"id":data.eventId,
+                         @"participantId":@"0",
+                         @"type":type,
+                         @"displayName":data.displayName,
+                         @"timeStamp":data.timestamp,
+                         @"message":data.message,
+                         @"status":@"1",
+                         @"options":opt,
+                         @"selectedOption": selected
+                         };
+            }else{
+                dict = @{@"id":data.eventId,
+                         @"participantId":@"0",
+                         @"type":type,
+                         @"displayName":data.displayName,
+                         @"timeStamp":data.timestamp,
+                         @"message":data.message,
+                         @"status":@"1",
+                         @"options":opt
+                         };
+            }
+        }else{
+            NSLog(@"Selected option index is empty");
+            dict = @{@"id":data.eventId,
+                     @"participantId":@"0",
+                     @"type":type,
+                     @"displayName":data.displayName,
+                     @"timeStamp":data.timestamp,
+                     @"message":data.message,
+                     @"status":@"1",
+                     @"options":opt
+                     };
+        }
+    }else{
+        dict = @{@"id":data.eventId,
+           @"participantId":@"0",
+           @"type":type,
+           @"displayName":data.displayName,
+           @"timeStamp":data.timestamp,
+           @"message":data.message,
+           @"status":@"1"
+        };
+    }
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:&error];
     if(error){

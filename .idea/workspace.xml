@@ -8,10 +8,8 @@
   <component name="ChangeListManager">
     <list default="true" id="f5d37bfa-ea68-4c13-b66e-91986f2aeead" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/android/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/android/.idea/caches/build_file_checksums.ser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/src/main/java/com/tanamduit/flutterzendeskchat/observers/ChatObserver.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/com/tanamduit/flutterzendeskchat/observers/ChatObserver.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ios/Classes/FlutterZendeskChatPlugin.m" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/FlutterZendeskChatPlugin.m" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/FlutterZendeskChat.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/FlutterZendeskChat.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/Utils/ConstantCollections.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Utils/ConstantCollections.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Models/SystemMessageModel.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Models/SystemMessageModel.dart" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -21,18 +19,18 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="FlutterZendeskChatPlugin.java" pinned="false" current-in-tab="true">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="FlutterZendeskChatPlugin.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/android/src/main/java/com/tanamduit/flutterzendeskchat/FlutterZendeskChatPlugin.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2064" />
+            <state />
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ChatObserver.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="ChatObserver.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/android/src/main/java/com/tanamduit/flutterzendeskchat/observers/ChatObserver.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-290" />
+            <state relative-caret-position="-1166" />
           </provider>
         </entry>
       </file>
@@ -50,6 +48,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
+      <pane id="AndroidView" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -129,18 +130,10 @@
               <item name="flutter_zendesk_chat" type="b2602c69:ProjectViewProjectNode" />
               <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
             </path>
-            <path>
-              <item name="flutter_zendesk_chat" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Dart Packages" type="3dd79eb:DartTreeStructureProvider$1" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="AndroidView" />
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -241,47 +234,56 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="right" id="Palette&#9;" />
-      <window_info id="Image Layers" />
-      <window_info anchor="right" id="Capture Analysis" />
-      <window_info anchor="bottom" id="Event Log" side_tool="true" />
-      <window_info anchor="bottom" id="Version Control" />
+      <window_info anchor="right" id="Palette&#9;" order="3" />
+      <window_info id="Image Layers" order="2" />
+      <window_info anchor="right" id="Capture Analysis" order="3" />
+      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Terminal" />
-      <window_info anchor="right" id="Flutter Outline" />
-      <window_info id="Capture Tool" />
-      <window_info id="Designer" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24964234" />
+      <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info anchor="bottom" id="Terminal" order="7" />
+      <window_info anchor="right" id="Flutter Outline" order="3" />
+      <window_info id="Capture Tool" order="2" />
+      <window_info id="Designer" order="2" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2532189" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="right" id="Theme Preview" />
-      <window_info id="Favorites" side_tool="true" />
+      <window_info anchor="right" id="Theme Preview" order="3" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
-      <window_info anchor="right" id="Flutter Inspector" />
-      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="right" id="Flutter Inspector" order="3" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info id="Captures" order="2" weight="0.25" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info id="Captures" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Find" order="1" />
     </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/android/src/main/java/com/tanamduit/flutterzendeskchat/FlutterZendeskChatPlugin.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state />
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/java/com/tanamduit/flutterzendeskchat/observers/ChatObserver.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-290" />
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/java/com/tanamduit/flutterzendeskchat/FlutterZendeskChatPlugin.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2064" />
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/android/src/main/java/com/tanamduit/flutterzendeskchat/observers/ChatObserver.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1166" />
       </provider>
     </entry>
   </component>
