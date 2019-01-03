@@ -423,7 +423,8 @@ NSString *lastId;
        @"type":@"SYSTEM_MESSAGE",
        @"displayName":@"tanamduit",
        @"timeStamp":data.timestamp,
-       @"message":data.message
+       @"message":data.message,
+       @"queue":data.visitorQueue
     };
     NSError *error;
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:&error];

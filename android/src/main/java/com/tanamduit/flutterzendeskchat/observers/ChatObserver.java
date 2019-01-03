@@ -136,6 +136,18 @@ public class ChatObserver extends ChatItemsObserver {
             }else if(item instanceof ChatEvent){
                 Log.e("chat-event","message : "+((ChatEvent)item).getMessage());
                 obj.put("message", ((ChatEvent) item).getMessage());
+                String queuePattern = "Please wait for an agent. There are currently";
+                if(((ChatEvent)item).getMessage().toLowerCase().contains(queuePattern.toLowerCase())){
+                    int leftIndex = queuePattern.length();
+                    int rightIndex = ((ChatEvent) item).getMessage().indexOf("visitor(s) waiting to be served.");
+                    int diff = rightIndex - leftIndex;
+                    Log.e("chat-event","left index : "+leftIndex+", rightIndex: "+rightIndex+", diff:"+diff);
+                    if(diff > 0) {
+                        String queue = ((ChatEvent) item).getMessage().substring(leftIndex, leftIndex+diff);
+                        Log.e("chat-event","queue : "+queue);
+                        obj.put("queue",queue.trim());
+                    }
+                }
             }else if(item instanceof ChatRating){
                 obj.put("rating", ((ChatRating) item).getRating().getValue());
                 obj.put("comment",((ChatRating) item).getComment());
