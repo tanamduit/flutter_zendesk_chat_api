@@ -42,19 +42,21 @@ public class ChatObserver extends ChatItemsObserver {
         Log.e("Chat Observer","observing chat with size :"+ chats.size());
         Iterator i = chats.values().iterator();
         if(isFirst){
-            isFirst = false;
-            lastId = null;
-            Log.e("flutter_zendesk_chat","its chat bulking");
-            while (i.hasNext()){
-                RowItem item = (RowItem)i.next();
-                if(!(item instanceof ChatRating)){
-                    Log.e("Chat Observer", "Chat type : " + item.getType().name());
-                    Map<String, String> data = new HashMap<>();
-                    data.put("rowItem", rowItemToString(item));
-                    FlutterZendeskChatPlugin.channel.invokeMethod("observingChat", data);
+            if(chats.size() > 0) {
+                isFirst = false;
+                lastId = null;
+                Log.e("flutter_zendesk_chat", "its chat bulking");
+                while (i.hasNext()) {
+                    RowItem item = (RowItem) i.next();
+                    if (!(item instanceof ChatRating)) {
+                        Log.e("Chat Observer", "Chat type : " + item.getType().name());
+                        Map<String, String> data = new HashMap<>();
+                        data.put("rowItem", rowItemToString(item));
+                        FlutterZendeskChatPlugin.channel.invokeMethod("observingChat", data);
+                    }
                 }
             }
-        }else {
+        }else{
             if(chats.size() > 0) {
                 RowItem last = chats.lastEntry().getValue();
                 Log.e("flutter_zendesk_chat","its only last chat");

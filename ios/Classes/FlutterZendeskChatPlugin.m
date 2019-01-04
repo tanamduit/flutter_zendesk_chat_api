@@ -219,10 +219,10 @@ NSString *lastId;
         NSArray* events = [chat livechatLog];
         NSLog(@"events count : %d",[events count]);
         if(_isFirstTime){
-            _isFirstTime = NO;
-            lastId = nil;
             NSLog(@"its bulking chat");
             if([events count] > 0){
+                _isFirstTime = NO;
+                lastId = nil;
                 for (ZDCChatEvent *event in events) {
                     lastId = event.eventId;
                     if(event.type != ZDCChatEventTypeRating){
