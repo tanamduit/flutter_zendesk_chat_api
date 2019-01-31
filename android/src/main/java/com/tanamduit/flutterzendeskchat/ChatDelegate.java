@@ -88,8 +88,8 @@ public class ChatDelegate implements ConnectionListener,NotificationListener {
             statusConnection(connection);
         }
         ZopimChatApi.getDataSource().addAccountObserver(accountObserver).trigger();
-        ZopimChatApi.getDataSource().addAgentsObserver(agentTypingObserver).trigger();
-        ZopimChatApi.getDataSource().addChatLogObserver(chatObserver).trigger();
+        //ZopimChatApi.getDataSource().addAgentsObserver(agentTypingObserver).trigger();
+        //ZopimChatApi.getDataSource().addChatLogObserver(chatObserver).trigger();
         ZopimChatApi.getDataSource().addConnectionObserver(vConnectionObserver);
         LocalBroadcastManager.getInstance(vRegistrar.activeContext()).registerReceiver(vChatTimeoutReceiver,new IntentFilter("chat.action.TIMEOUT"));
         chatListener.onChatInitialized();
