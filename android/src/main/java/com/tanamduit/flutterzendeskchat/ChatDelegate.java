@@ -3,7 +3,7 @@ package com.tanamduit.flutterzendeskchat;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.tanamduit.flutterzendeskchat.Receiver.ChatTimeoutReceiver;

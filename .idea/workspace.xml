@@ -7,9 +7,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f5d37bfa-ea68-4c13-b66e-91986f2aeead" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/android/.idea/.name" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/android/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/android/.idea/caches/build_file_checksums.ser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ios/Classes/FlutterZendeskChatPlugin.m" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/FlutterZendeskChatPlugin.m" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/Models/SystemMessageModel.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Models/SystemMessageModel.dart" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -30,7 +29,7 @@
       <file leaf-file-name="ChatObserver.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/android/src/main/java/com/tanamduit/flutterzendeskchat/observers/ChatObserver.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1166" />
+            <state />
           </provider>
         </entry>
       </file>
@@ -48,9 +47,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
       <pane id="AndroidView" />
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -129,6 +128,11 @@
             <path>
               <item name="flutter_zendesk_chat" type="b2602c69:ProjectViewProjectNode" />
               <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+            </path>
+            <path>
+              <item name="flutter_zendesk_chat" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Android API 26 Platform &gt;" type="70bed36:NamedLibraryElementNode" />
             </path>
           </expand>
           <select />
@@ -246,7 +250,7 @@
       <window_info anchor="right" id="Flutter Outline" order="3" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="2" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2532189" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25679544" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Theme Preview" order="3" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
@@ -283,7 +287,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/java/com/tanamduit/flutterzendeskchat/observers/ChatObserver.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1166" />
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/android/src/main/java/com/tanamduit/flutterzendeskchat/FlutterZendeskChatPlugin.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/android/src/main/java/com/tanamduit/flutterzendeskchat/observers/ChatObserver.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state />
       </provider>
     </entry>
   </component>
