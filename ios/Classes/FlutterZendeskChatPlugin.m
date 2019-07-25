@@ -1,5 +1,4 @@
 #import "FlutterZendeskChatPlugin.h"
-#import <ZDCChatAPI/ZDCLog.h>
 #import <ZDCChatAPI/ZDCChatAPI.h>
 
 
@@ -110,8 +109,6 @@ NSString *lastId;
     NSString *email = call.arguments[@"email"];
     NSString *name = call.arguments[@"name"];
     NSString *fcmId = call.arguments[@"fcmId"];
-    [ZDCLog enable:@YES];
-    [ZDCLog setLogLevel:ZDCLogLevelVerbose];
     NSLog(@"account key :  %@",accKey);
     NSLog(@"Name :  %@",name);
     NSLog(@"Phone:  %@",phone);
